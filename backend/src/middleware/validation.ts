@@ -14,7 +14,9 @@ export const validateParams = (schema: ObjectSchema) => {
       return;
     }
     
-    req.params = value;
+    // req.params = value;
+        (req as any).validatedParams = value;
+
     next();
   };
 };
@@ -31,7 +33,9 @@ export const validateQuery = (schema: ObjectSchema) => {
       return;
     }
     
-    req.query = value;
+    // req.query = value;
+        (req as any).validatedQuery = value;
+
     next();
   };
 };

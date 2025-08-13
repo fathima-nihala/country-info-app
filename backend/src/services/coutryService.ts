@@ -44,7 +44,9 @@ class CountryService {
     }
   }
 
-  async getAllCountries(): Promise<CountryListItem[]> {
+
+
+ async getAllCountries(): Promise<CountryListItem[]> {
     const countries = await this.makeRequest<Country[]>(
       `${this.baseUrl}/all?fields=name,cca2,capital,region,population,flags,timezones`,
       'all-countries',
@@ -68,7 +70,9 @@ class CountryService {
     return transformToDetail(countries[0]);
   }
 
-  async getCountriesByRegion(region: string): Promise<CountryListItem[]> {
+
+
+ async getCountriesByRegion(region: string): Promise<CountryListItem[]> {
     const countries = await this.makeRequest<Country[]>(
       `${this.baseUrl}/region/${encodeURIComponent(region)}?fields=name,cca2,capital,region,population,flags,timezones`,
       `region-${region}`,
@@ -77,6 +81,7 @@ class CountryService {
 
     return countries.map(transformToListItem);
   }
+
 
   async searchCountries(query: SearchQuery): Promise<{
     countries: CountryListItem[];

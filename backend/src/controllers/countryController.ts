@@ -3,15 +3,23 @@ import countryService from '../services/coutryService';
 import { ApiResponse, CountryListItem, CountryDetail, SearchQuery } from '../types';
 import { asyncHandler } from '../middleware/async';
 
+// Extend Request interface to include validated data
+interface ValidatedRequest extends Request {
+  validatedQuery?: any;
+  validatedParams?: any;
+}
+
 class CountryController {
-  getAllCountries = asyncHandler(async (req: Request, res: Response<ApiResponse<CountryListItem[]>>) => {
-    const { page = 1, limit = 20 } = req.query as any;
+  getAllCountries = asyncHandler(async (req: ValidatedRequest, res: Response<ApiResponse<CountryListItem[]>>) => {
+    // Use validated query or fall back to original query
+    const query = req.validatedQuery || req.query;
+    const { page = 1, limit = 20 } = query;
     
     const countries = await countryService.getAllCountries();
     
     // Apply pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const startIndex = (Number(page) - 1) * Number(limit);
+    const endIndex = startIndex + Number(limit);
     const paginatedCountries = countries.slice(startIndex, endIndex);
     const hasMore = endIndex < countries.length;
 
@@ -27,8 +35,10 @@ class CountryController {
     });
   });
 
-  getCountryByCode = asyncHandler(async (req: Request, res: Response<ApiResponse<CountryDetail>>) => {
-    const { code } = req.params;
+  getCountryByCode = asyncHandler(async (req: ValidatedRequest, res: Response<ApiResponse<CountryDetail>>) => {
+    // Use validated params or fall back to original params
+    const params = req.validatedParams || req.params;
+    const { code } = params;
     
     const country = await countryService.getCountryByCode(code);
     
@@ -38,15 +48,18 @@ class CountryController {
     });
   });
 
-  getCountriesByRegion = asyncHandler(async (req: Request, res: Response<ApiResponse<CountryListItem[]>>) => {
-    const { region } = req.params;
-    const { page = 1, limit = 20 } = req.query as any;
+  getCountriesByRegion = asyncHandler(async (req: ValidatedRequest, res: Response<ApiResponse<CountryListItem[]>>) => {
+    // Use validated params and query or fall back to originals
+    const params = req.validatedParams || req.params;
+    const query = req.validatedQuery || req.query;
+    const { region } = params;
+    const { page = 1, limit = 20 } = query;
     
     const countries = await countryService.getCountriesByRegion(region);
     
     // Apply pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const startIndex = (Number(page) - 1) * Number(limit);
+    const endIndex = startIndex + Number(limit);
     const paginatedCountries = countries.slice(startIndex, endIndex);
     const hasMore = endIndex < countries.length;
 
@@ -62,8 +75,9 @@ class CountryController {
     });
   });
 
-  searchCountries = asyncHandler(async (req: Request, res: Response<ApiResponse<CountryListItem[]>>) => {
-    const query = req.query as SearchQuery;
+  searchCountries = asyncHandler(async (req: ValidatedRequest, res: Response<ApiResponse<CountryListItem[]>>) => {
+    // Use validated query or fall back to original query
+    const query = (req.validatedQuery || req.query) as SearchQuery;
     
     const result = await countryService.searchCountries(query);
     
