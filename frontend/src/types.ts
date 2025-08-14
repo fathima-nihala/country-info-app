@@ -1,3 +1,11 @@
+
+export interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}
+
 export interface CountryListItem {
   name: string;
   code: string;
@@ -12,11 +20,7 @@ export interface CountryDetail extends CountryListItem {
   officialName: string;
   subregion: string;
   area: number;
-  currencies: Array<{
-    code: string;
-    name: string;
-    symbol: string;
-  }>;
+  currencies: Array<{ code: string; name: string; symbol: string }>;
   languages: string[];
   maps: {
     googleMaps: string;
@@ -28,9 +32,9 @@ export interface CountryDetail extends CountryListItem {
   unMember: boolean;
 }
 
-export interface Pagination {
-  total: number;
-  page: number;
-  limit: number;
-  hasMore: boolean;
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  pagination?: Pagination;
 }
