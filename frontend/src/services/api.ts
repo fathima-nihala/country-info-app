@@ -3,7 +3,7 @@ import axios from "axios";
 import type { CountryListItem, CountryDetail, ApiResponse } from "../types";
 
 const API_BASE =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:4000/api";
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "https://country-info-app-vty7.onrender.com/api";
 
 export async function fetchCountries(page: number, limit: number) {
   const res = await axios.get<ApiResponse<CountryListItem[]>>(
