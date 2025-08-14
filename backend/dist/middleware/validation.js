@@ -11,7 +11,7 @@ const validateParams = (schema) => {
             });
             return;
         }
-        req.params = value;
+        req.validatedParams = value;
         next();
     };
 };
@@ -26,7 +26,7 @@ const validateQuery = (schema) => {
             });
             return;
         }
-        req.query = value;
+        req.validatedQuery = value;
         next();
     };
 };

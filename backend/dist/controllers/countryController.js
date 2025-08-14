@@ -8,10 +8,11 @@ const async_1 = require("../middleware/async");
 class CountryController {
     constructor() {
         this.getAllCountries = (0, async_1.asyncHandler)(async (req, res) => {
-            const { page = 1, limit = 20 } = req.query;
+            const query = req.validatedQuery || req.query;
+            const { page = 1, limit = 20 } = query;
             const countries = await coutryService_1.default.getAllCountries();
-            const startIndex = (page - 1) * limit;
-            const endIndex = startIndex + limit;
+            const startIndex = (Number(page) - 1) * Number(limit);
+            const endIndex = startIndex + Number(limit);
             const paginatedCountries = countries.slice(startIndex, endIndex);
             const hasMore = endIndex < countries.length;
             res.json({
@@ -26,7 +27,8 @@ class CountryController {
             });
         });
         this.getCountryByCode = (0, async_1.asyncHandler)(async (req, res) => {
-            const { code } = req.params;
+            const params = req.validatedParams || req.params;
+            const { code } = params;
             const country = await coutryService_1.default.getCountryByCode(code);
             res.json({
                 success: true,
@@ -34,11 +36,13 @@ class CountryController {
             });
         });
         this.getCountriesByRegion = (0, async_1.asyncHandler)(async (req, res) => {
-            const { region } = req.params;
-            const { page = 1, limit = 20 } = req.query;
+            const params = req.validatedParams || req.params;
+            const query = req.validatedQuery || req.query;
+            const { region } = params;
+            const { page = 1, limit = 20 } = query;
             const countries = await coutryService_1.default.getCountriesByRegion(region);
-            const startIndex = (page - 1) * limit;
-            const endIndex = startIndex + limit;
+            const startIndex = (Number(page) - 1) * Number(limit);
+            const endIndex = startIndex + Number(limit);
             const paginatedCountries = countries.slice(startIndex, endIndex);
             const hasMore = endIndex < countries.length;
             res.json({
@@ -53,7 +57,7 @@ class CountryController {
             });
         });
         this.searchCountries = (0, async_1.asyncHandler)(async (req, res) => {
-            const query = req.query;
+            const query = (req.validatedQuery || req.query);
             const result = await coutryService_1.default.searchCountries(query);
             res.json({
                 success: true,
