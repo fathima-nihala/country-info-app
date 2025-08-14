@@ -46,7 +46,7 @@ export default function CountryListPage() {
   return (
     <div className="p-4">
       {/* Search & Filters */}
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
+      <div className="flex flex-col md:flex-row gap-2 mb-4 w-full">
         <input
           type="text"
           placeholder="Search by name"
