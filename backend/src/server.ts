@@ -18,12 +18,34 @@ const PORT = process.env.PORT || 4000;
 app.use(helmet());
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173', // local dev
+  'https://country-info-app-mauve.vercel.app', // main production
+  'https://country-info-app-git-master-fathima-nihalas-projects.vercel.app' // current preview link
+];
+
+// Allow all vercel preview deployments for this project
+const vercelRegex = /^https:\/\/country-info-app.*\.vercel\.app$/;
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow requests with no origin (Postman, curl)
+    if (allowedOrigins.includes(origin) || vercelRegex.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
+
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true
+// }));
 
 // Rate limiting
 const limiter = rateLimit({
