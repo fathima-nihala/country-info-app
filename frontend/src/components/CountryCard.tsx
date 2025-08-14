@@ -9,24 +9,49 @@ interface Props {
 export default function CountryCard({ country, onClick }: Props) {
   const [localTime, setLocalTime] = useState<string>("");
 
+
   useEffect(() => {
-    const updateTime = () => {
-      try {
-        const formatter = new Intl.DateTimeFormat("en-US", {
+  const updateTime = () => {
+    try {
+      const tz = country.timezones[0]; // e.g., "UTC+01:00"
+      if (!tz || !tz.startsWith("UTC")) {
+        setLocalTime("N/A");
+        return;
+      }
+
+      // Parse offset
+      const match = tz.match(/UTC([+-])(\d{2}):?(\d{2})?/);
+      if (!match) {
+        setLocalTime("N/A");
+        return;
+      }
+
+      const sign = match[1] === "-" ? -1 : 1;
+      const hours = parseInt(match[2], 10);
+      const minutes = parseInt(match[3] || "0", 10);
+      const offsetMinutes = sign * (hours * 60 + minutes);
+
+      const now = new Date();
+      const localUTC = now.getTime() + now.getTimezoneOffset() * 60000;
+      const local = new Date(localUTC + offsetMinutes * 60000);
+
+      setLocalTime(
+        local.toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
           hour12: true,
-          timeZone: country.timezones[0] || "UTC",
-        });
-        setLocalTime(formatter.format(new Date()));
-      } catch {
-        setLocalTime("N/A");
-      }
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 60000);
-    return () => clearInterval(interval);
-  }, [country.timezones]);
+        })
+      );
+    } catch {
+      setLocalTime("N/A");
+    }
+  };
+
+  updateTime();
+  const interval = setInterval(updateTime, 60000);
+  return () => clearInterval(interval);
+}, [country.timezones]);
+
 
   return (
     <div
